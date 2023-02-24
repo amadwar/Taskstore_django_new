@@ -1,0 +1,12 @@
+datetime
+fastapi
+python-dateutil
+typing
+pydantic
+uvicorn
+requests
+datetime
+python-arango
+starlette
+django-cors-headers
+djangorestframework
