@@ -75,11 +75,11 @@ function TaskList() {
       setFormData({ ...formData, [event.target.name]: event.target.value });
       }
 
-      const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
-        const selectedUsers = tasks.filter(task => selectedOptions.includes(task.title));
-        setFormData({ ...formData, Tasks:tasks });
-        }; 
+        const selectedUsers = selectedOptions.map((option) => tasks.find((task) => task.id === parseInt(option))!);
+        setFormData({ ...formData, Tasks: selectedUsers });
+      };
 
 
 
@@ -99,10 +99,10 @@ function TaskList() {
     <br />
     <label>
     Tasks:
-    <select name="tasks" multiple={true} onChange={handleSelectChange} value={formData.label}>
+    <select name="tasks" multiple={true} onChange={handleSelectChange} value={formData.Tasks.map(task => task.id).join(',')}>
     <option value="">Select Task</option>
    {tasks.map(task => (
-   <option key={task.title} value={task.title}>{task.title}</option>
+   <option key={task.id} value={task.id}>{task.title}</option>
     ))}
    </select>
    </label>
@@ -113,29 +113,33 @@ function TaskList() {
  
   <div>
   <h3>List of TaskLists</h3>
- <table>
-  <tr>
-    <th>Type</th>
-    <th>Label</th>
-    <th>Tasks</th>
-  </tr>
-  {isLoading ? (
+  <table>
+  <thead>
     <tr>
-      <td colSpan={12}>Loading...</td>
+      <th>Type</th>
+      <th>Label</th>
+      <th>Tasks</th>
     </tr>
-  ) : error ? (
-    <tr>
-      <td colSpan={12}>{error}</td>
-    </tr>
-  ) : (
-    tasklists.map(tasklist => (
-      <tr key={tasklist.type}>
-        <td>{tasklist.type}</td>
-        <td>{tasklist.label}</td>
-        <td>{tasklist.Tasks.map((task) => task.title).join(", ")}</td>
+  </thead>
+  <tbody>
+    {isLoading ? (
+      <tr>
+        <td colSpan={12}>Loading...</td>
       </tr>
-    ))
-  )}
+    ) : error ? (
+      <tr>
+        <td colSpan={12}>{error}</td>
+      </tr>
+    ) : (
+      tasklists.map((tasklist) => (
+        <tr key={tasklist.id}>
+          <td>{tasklist.type}</td>
+          <td>{tasklist.label}</td>
+          
+        </tr>
+      ))
+    )}
+  </tbody>
 </table>
 </div>
   </div>

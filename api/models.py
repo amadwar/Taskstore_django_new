@@ -4,7 +4,7 @@ from enum import Enum
 # Create your models here.
 
 class User(models.Model):
-    
+    id=models.AutoField(primary_key=True)
     name=models.CharField(unique=True,max_length=50)
     role=models.CharField(max_length=20)
     def __str__(self):
@@ -12,9 +12,9 @@ class User(models.Model):
 
 
 class Group(models.Model):
-    
+    id=models.AutoField(primary_key=True)
     name = models.CharField(unique=True,max_length=50)
-    members = models.ManyToManyField(User, related_name='groups')
+    members = models.ManyToManyField(User,related_name='groups')
     def __str__(self):
         return self.name
 

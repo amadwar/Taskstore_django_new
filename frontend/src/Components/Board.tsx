@@ -21,7 +21,7 @@ interface Board {
   columns: TaskList[];
 }
 
-function Board() {
+function Boards() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [taskLists, setTaskLists] = useState<TaskList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,7 @@ function Board() {
   useEffect(() => {
     async function fetchTaskLists() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/tasklists/");
+        const response = await axios.get("http://127.0.0.1:8000/api/Tasklists/");
         setTaskLists(response.data);
       } catch (error) {
         //setError(error.message);
@@ -66,8 +66,9 @@ function Board() {
       });
       if (response.status === 201) {
         console.log(response.data);
-        setBoards([...boards, response.data]);
+        setFormData({ id: 0, name: '', columns: [] }); // Clear form data
       }
+      
     } catch (error) {
       console.log(error);
     }
@@ -79,8 +80,8 @@ function Board() {
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
-    const selectedTaskLists = taskLists.filter((taskList) => selectedOptions.includes(taskList.type));
-    setFormData({ ...formData, columns: selectedTaskLists });
+    const selectedTasklists = selectedOptions.map((option) => taskLists.find((tasklist) => tasklist.id === parseInt(option))!);
+    setFormData({ ...formData, columns: selectedTasklists });
   };
 
   return (
@@ -94,9 +95,9 @@ function Board() {
         <br />
         <label>
           TaskLists:
-          <select name="tasklists" multiple={true} onChange={handleSelectChange} value={formData.columns.map(taskList => taskList.type)}>
+          <select name="tasklists" multiple={true} onChange={handleSelectChange} value={formData.columns.map(tasklist => tasklist.id).join(',')}>
             {taskLists.map(tasklist => (
-              <option key={tasklist.id} value={tasklist.type}>{tasklist.type}</option>
+              <option key={tasklist.id} value={tasklist.id}>{tasklist.type}</option>
             ))}
           </select>
         </label>
@@ -110,7 +111,7 @@ function Board() {
  <table>
   <tr>
     <th>Name</th>
-    <th>columns</th>
+    <th>Columns</th>
   </tr>
   {isLoading ? (
     <tr>
@@ -124,7 +125,7 @@ function Board() {
     boards.map(board => (
       <tr >
         <td>{board.name}</td>
-        <td>{board.columns.map(() => board.name).join(", ")}</td>
+        <td>{board.columns.map((tasklist) =>tasklist.type).join(", ")}</td>
       </tr>
     ))
   )}
@@ -134,4 +135,4 @@ function Board() {
   );
 }
 
-export default Board;
+export default Boards;

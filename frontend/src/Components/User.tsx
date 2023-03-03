@@ -13,6 +13,7 @@ function getCookie(name: string): string | null {
 }
 
 export interface User {
+  id:number
   name: string;
   role: string;
 }
@@ -36,7 +37,7 @@ function Users() {
         fetchUsers();
     }, []);
 
-  const [formData, setFormData] = useState<User>({ name: '', role: '' });
+  const [formData, setFormData] = useState<User>({ id:0,name: '', role: '' });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -88,6 +89,7 @@ function Users() {
     <h3>List of Users</h3>
     <table>
     <tr>
+    <th>ID</th>
     <th>Name</th>
     <th>Rolle</th>
     </tr>
@@ -101,7 +103,8 @@ function Users() {
     </tr>
     ) : (
     users.map(user => (
-    <tr key={user.name}>
+    <tr key={user.id}>
+    <td>{user.id}</td> 
     <td>{user.name}</td>
     <td>{user.role}</td>
     </tr>

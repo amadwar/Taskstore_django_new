@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useState, useEffect, SelectHTMLAttributes } from 'react';
-import { User } from './User';
+import React, { useState, useEffect } from 'react';
+import { User as GroupMember } from './User';
 
 function getCookie(name: string): string | null {
 const cookieRegex = new RegExp(`;\\s*${name}=([^;]+)`);
@@ -12,18 +12,14 @@ return null;
 }
 
 export interface Group {
+  id:number;
   name: string;
-  members: User[];
-  }
-  
-  interface FormData {
-  name: string;
-  members: User[];
+  members: GroupMember[];
   }
   
   function Groups(): JSX.Element {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<GroupMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   
@@ -48,12 +44,11 @@ export interface Group {
       setIsLoading(false);
     }
   }
-  
-  fetchGroups();
-  fetchUsers();
-}, []);
 
-const [formData, setFormData] = useState<FormData>({ name: '', members: [] });
+  fetchUsers();
+  fetchGroups();}, []);
+
+const [formData, setFormData] = useState<Group>({ id:0, name: '', members: [] });
 
 const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 event.preventDefault();
@@ -78,10 +73,11 @@ setFormData({ ...formData, [event.target.name]: event.target.value });
 }
 
 const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
-const selectedUsers = users.filter(user => selectedOptions.includes(user.name));
-setFormData({ ...formData, members: selectedUsers });
+  const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
+  const selectedUsers = selectedOptions.map((option) => users.find((user) => user.id === parseInt(option))!);
+  setFormData({ ...formData, members: selectedUsers });
 };
+
 
 return (
 <div>
@@ -92,15 +88,21 @@ Group Name:
 <input type="text" name="name" onChange={handleChange} value={formData.name} />
 </label>
 <br />
+
+
+
 <label>
-Members:
-<select name="members" multiple={true} onChange={handleSelectChange} value={formData.name}>
-<option value="">Select User</option>
-{users.map(user => (
-<option key={user.name} value={user.name}>{user.name}</option>
-  ))}
-</select>
- </label>
+  Members:
+  <select name="members" multiple={true} onChange={handleSelectChange} value={formData.members.map(user => user.id).join(',')}>
+    <option value="">Select User</option>
+    {users.map((user) => (
+      <option key={user.id} value={user.id}>
+        {user.name}
+      </option>
+    ))}
+  </select>
+</label>
+
 
 <br />
 <input type="submit" value="Submit" />
@@ -110,6 +112,7 @@ Members:
   <table>
     <thead>
       <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Members</th>
       </tr>
@@ -124,21 +127,24 @@ Members:
           <td colSpan={2}>{error}</td>
         </tr>
       ) : (
-        groups.map((group) => (
-          <tr key={group.name}>
+        groups.map(group => (
+          <tr key={group.id}>
+            <td>{group.id}</td>
             <td>{group.name}</td>
             <td>
-              <ul>
-                {group.members.map((member) => (
-                  <li key={member.name}>{member.name}</li>
+                {group.members.map(member => (
+                    member.id
                 ))}
-              </ul>
+              
             </td>
           </tr>
         ))
       )}
     </tbody>
   </table>
+<div>
+</div>
+
 </div>
 
     

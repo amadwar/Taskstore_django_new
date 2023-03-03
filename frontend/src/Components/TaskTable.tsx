@@ -22,18 +22,18 @@ export interface Task {
   due_date: string;
   create_date: string;
   modification_date: string;
-  assigned_user: string;//vorläufig änderung
-  assigned_group:string;
-  created_by: string;
-  modified_by: string;
+  assigned_user: number;//vorläufig änderung
+  assigned_group:number;
+  created_by: number;
+  modified_by: number;
   status: TaskStatus;
 }
 
 enum TaskStatus {
-  new = 'new',
-  in_progress = 'in_progress',
-  done = 'done',
-  removed = 'removed'
+  new = "new",
+  in_progress = "in_progress",
+  done = "done",
+  removed = "removed"
 }
 
 function TaskTable() {
@@ -114,10 +114,7 @@ setFormData({
 };
 
 const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData({
-    ...formData,
-    [event.target.name]: event.target.value
-    });
+    setFormData({...formData,[event.target.name]: event.target.value});
     };
 
 if (isLoading) {
@@ -153,7 +150,7 @@ Assigned User:
 <select name="assigned_user" value={formData.assigned_user} onChange={handleSelectChange}>
 <option value="">Select a user</option>
 {users.map(user => (
-<option key={user.name} value={user.name}>{user.name}</option>
+<option key={user.id} value={user.id}>{user.name}</option>
 ))}
 </select>
 </label>
@@ -163,18 +160,17 @@ Assigned Group:
 <select name="assigned_group" value={formData.assigned_group} onChange={handleSelectChange}>
 <option value="">Select a group</option>
 {groups.map(group => (
-<option key={group.name} value={group.name}>{group.name}</option>
+<option key={group.id} value={group.id}>{group.name}</option>
 ))}
 </select>
 </label>
 <br />
 <label>
-<label>
 created_by:
 <select name="created_by" onChange={handleSelectChange} value={formData.created_by}>
 <option value="0">Select User</option>
 {users.map(user => (
-<option key={user.name} value={user.name}>{user.name}</option>
+<option key={user.id} value={user.id}>{user.name}</option>
 ))}
 </select>
 </label>
@@ -184,11 +180,12 @@ modified_by:
 <select name="modified_by" onChange={handleSelectChange} value={formData.modified_by}>
 <option value="0">Select User</option>
 {users.map(user => (
-<option key={user.name} value={user.name}>{user.name}</option>
+<option key={user.id} value={user.id}>{user.name}</option>
 ))}
 </select>
 </label>
 <br/>
+<label>
 Status:
 <select name="status" value={formData.status} onChange={handleSelectChange}>
 <option value="">Select a status</option>
@@ -232,9 +229,9 @@ Status:
 <td>{task.type}</td>
 <td>{task.title}</td>
 <td>{task.description}</td>
-<td>{<span>{task.due_date.toString()}</span>}</td>
-<td>{<span>{task.create_date.toString()}</span>}</td>
-<td>{<span>{task.modification_date.toString()}</span>}</td>
+<td>{task.due_date}</td>
+<td>{task.create_date}</td>
+<td>{task.modification_date}</td>
 <td>{task.assigned_user}</td>
 <td>{task.assigned_group}</td>
 <td>{task.created_by}</td>
