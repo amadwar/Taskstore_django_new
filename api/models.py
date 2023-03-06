@@ -47,7 +47,7 @@ class Task(models.Model):
     
 
 class Board(models.Model):
-    
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     columns = models.ManyToManyField('TaskList', related_name='boards')
 

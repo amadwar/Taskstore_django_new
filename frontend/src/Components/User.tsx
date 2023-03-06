@@ -50,6 +50,8 @@ function Users() {
             }
         });
         if (response.status === 201) {
+            setShowNotification(true);
+            setTimeout(() => setShowNotification(false), 3000);
             console.log(response.data);
         }
     } catch (error) {
@@ -59,8 +61,7 @@ function Users() {
   
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
-    //setShowNotification(true);
-    //setTimeout(() => setShowNotification(false), 3000); // hide notification after 3 seconds
+    
 
     }
     

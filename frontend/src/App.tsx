@@ -15,9 +15,22 @@ function App() {
      <br />
      </div>
      <div>
+     <Groups/>
+     <br />
+     </div>
+     <div>
      <TaskTable/>
      <br />
      </div>
+     <div>
+     <TaskList/>
+     <br />
+     </div>
+     <div>
+     <Boards/>
+     <br />
+     </div>
+     
      
       
     </div>

@@ -42,7 +42,7 @@ function TaskTable() {
   const [error, setError] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
-
+  const [showNotification, setShowNotification] = useState(false);
   useEffect(() => {
     async function fetchTasks() {
       try {
@@ -99,6 +99,8 @@ headers: {
 
 
 });
+setShowNotification(true);
+setTimeout(() => setShowNotification(false), 3000);
 console.log(formData);
 setTasks([...tasks, response.data]);
 } catch (error) {
@@ -196,6 +198,7 @@ Status:
 </select>
 </label>
 <br />
+{showNotification && <div className="notification">Changes saved successfully!</div>}
 <button type="submit">Add Task</button>
 </form>
 <br />

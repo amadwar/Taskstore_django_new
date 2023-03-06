@@ -3,16 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { TaskList } from './TaskList';
 
 
-let documentCookie = document.cookie;
-
 function getCookie(name: string): string | null {
-const cookieRegex = new RegExp(`;\\s*${name}=([^;]+)`);
-const match = cookieRegex.exec(documentCookie);
-if (match) {
-return match[1];
-}
-return null;
-}
+  const cookieRegex = new RegExp(`;\\s*${name}=([^;]+)`);
+  const match = cookieRegex.exec(document.cookie);
+  if (match) {
+  return match[1];
+  }
+  return null;
+  }
 
 
 interface Board {
@@ -26,7 +24,7 @@ function Boards() {
   const [taskLists, setTaskLists] = useState<TaskList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [showNotification, setShowNotification] = useState(false);
   useEffect(() => {
     async function fetchTaskLists() {
       try {
@@ -58,15 +56,17 @@ function Boards() {
     event.preventDefault();
     try {
       const csrfToken = getCookie('csrftoken');
-      const response = await axios.post("http://127.0.0.1:8000/api/boards/", formData, {
+      const data = { name: formData.name,columns: formData.columns.map(column => column.id) };
+      const response = await axios.post("http://127.0.0.1:8000/api/boards/", data, {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': csrfToken
         }
       });
       if (response.status === 201) {
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000);
         console.log(response.data);
-        setFormData({ id: 0, name: '', columns: [] }); // Clear form data
       }
       
     } catch (error) {
@@ -102,6 +102,7 @@ function Boards() {
           </select>
         </label>
         <br />
+        {showNotification && <div className="notification">Changes saved successfully!</div>}
         <input type="submit" value="Submit" />
 
       </form>
@@ -125,7 +126,9 @@ function Boards() {
     boards.map(board => (
       <tr >
         <td>{board.name}</td>
-        <td>{board.columns.map((tasklist) =>tasklist.type).join(", ")}</td>
+        <td>{board.columns.map(column => (
+            <span key={column.id}><ul><li>{column.id}</li> </ul></span>
+          )).join(',')}</td>
       </tr>
     ))
   )}

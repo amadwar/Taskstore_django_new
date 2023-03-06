@@ -22,6 +22,7 @@ export interface Group {
   const [users, setUsers] = useState<GroupMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
   
   useEffect(() => {
   async function fetchUsers() {
@@ -54,14 +55,17 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 event.preventDefault();
 try {
 const csrfToken = getCookie('csrftoken');
-const response = await axios.post("http://localhost:8000/api/group/", formData, {
+const data = { name: formData.name, members: formData.members.map(member => member.id) };
+const response = await axios.post("http://localhost:8000/api/group/", data, {
 headers: {
 'Content-Type': 'application/json',
 'X-CSRFToken': csrfToken
 }
 });
 if (response.status === 201) {
-console.log(response.data);
+  setShowNotification(true);
+  setTimeout(() => setShowNotification(false), 3000);
+ console.log(response.data);
 }
 } catch (error) {
 console.log(error);
@@ -88,9 +92,6 @@ Group Name:
 <input type="text" name="name" onChange={handleChange} value={formData.name} />
 </label>
 <br />
-
-
-
 <label>
   Members:
   <select name="members" multiple={true} onChange={handleSelectChange} value={formData.members.map(user => user.id).join(',')}>
@@ -102,9 +103,8 @@ Group Name:
     ))}
   </select>
 </label>
-
-
 <br />
+{showNotification && <div className="notification">Changes saved successfully!</div>}
 <input type="submit" value="Submit" />
 </form>
 <div>
@@ -120,11 +120,11 @@ Group Name:
     <tbody>
       {isLoading ? (
         <tr>
-          <td colSpan={2}>Loading...</td>
+          <td colSpan={12}>Loading...</td>
         </tr>
       ) : error ? (
         <tr>
-          <td colSpan={2}>{error}</td>
+          <td colSpan={12}>{error}</td>
         </tr>
       ) : (
         groups.map(group => (
@@ -132,10 +132,9 @@ Group Name:
             <td>{group.id}</td>
             <td>{group.name}</td>
             <td>
-                {group.members.map(member => (
-                    member.id
-                ))}
-              
+            {group.members.map(member => (
+            <span key={member.id}>{member.name} </span>
+          )).join(',')}
             </td>
           </tr>
         ))

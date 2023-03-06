@@ -19,21 +19,19 @@ class Taskserializers(serializers.ModelSerializer):
     assigned_group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
     created_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     modified_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-
     class Meta:
         model = Task
         fields = ["id","type","title","description","due_date","create_date","modification_date","assigned_user","assigned_group","created_by","modified_by","status"]
     
 
-class TaskListserializers(serializers.HyperlinkedModelSerializer):
+class TaskListserializers(serializers.ModelSerializer):
     tasks = serializers.PrimaryKeyRelatedField(queryset=Task.objects.all(),many=True)
     class Meta:
         model = TaskList
         fields=["id","type","label","tasks"]
 
-class Boradserializers(serializers.HyperlinkedModelSerializer):
+class Boradserializers(serializers.ModelSerializer):
     columns = serializers.PrimaryKeyRelatedField(queryset=TaskList.objects.all(),many=True)
     class Meta:
         model = Board
-        fields=["name","columns"]
+        fields=["id","name","columns"]
